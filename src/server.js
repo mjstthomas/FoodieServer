@@ -1,11 +1,19 @@
 require('dotenv').config()
 const app = require('./app')
-const { PORT } = require('./config')
+const knex = require('knex')
+const { PORT, DATABASE_URL } = require('./config')
 const {MongoClient} = require('mongodb')
 const uri = `mongodb+srv://mjstthomas:${process.env.MONGO_PW}@cluster0-prwhd.mongodb.net/<dbname>?retryWrites=true&w=majority`
 const client = new MongoClient(uri, {
 	useUnifiedTopology: true
 })
+
+const db = knex({
+	client: 'pg',
+	connection: process.env.DATABASE_URL
+});
+
+app.set('db', db);
 
 async function connection(client){
 	await client.connect()
